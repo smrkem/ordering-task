@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './App.css'
+import DropContainer from './DropContainer'
 
 export default class Survey extends Component {
   state = {
@@ -25,15 +26,11 @@ export default class Survey extends Component {
     this.showIssue(id);
   }
 
-  onDragOver(e) {
-    e.preventDefault();
-  }
-
   onDrop(e, cat) {
     let id = e.dataTransfer.getData("id");
     this.setState({showing: false});
     let issues = this.state.issues.map(issue => {
-      if (issue.name == id) {
+      if (issue.name === id) {
         issue.category = cat;
       }
       return issue;
@@ -91,27 +88,26 @@ export default class Survey extends Component {
             <span className="task-header">ISSUES</span>
             {issues.uncategorized}
         </div>
-        <div className="container-dontcare droppable"
-            onDragOver={e => this.onDragOver(e)}
-            onDrop={e => this.onDrop(e, "dontcare")}
-        >
-            <span className="task-header">DON'T CARE</span>
-            {issues.dontcare}
-        </div>
-        <div className="container-carelittle droppable"
-            onDragOver={e => this.onDragOver(e)}
-            onDrop={e => this.onDrop(e, "carelittle")}
-        >
-            <span className="task-header">CARE A LITTLE</span>
-            {issues.carelittle}
-        </div>
-        <div className="container-carelots droppable"
-            onDragOver={e => this.onDragOver(e)}
-            onDrop={e => this.onDrop(e, "carelots")}
-        >
-            <span className="task-header">CARE A LOT</span>
-            {issues.carelots}
-        </div>
+
+        <DropContainer 
+          category="dontcare"
+          title="DON'T CARE"
+          items={issues.dontcare}
+          onDrop={e => this.onDrop(e, "dontcare")}
+        />
+        <DropContainer 
+          category="carelittle"
+          title="CARE A LITTLE"
+          items={issues.carelittle}
+          onDrop={e => this.onDrop(e, "carelittle")}
+        />
+        <DropContainer 
+          category="carelots"
+          title="CARE A LOT"
+          items={issues.carelots}
+          onDrop={e => this.onDrop(e, "carelots")}
+        />
+
       </div>
     )
   }
