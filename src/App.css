@@ -1,3 +1,13 @@
+.container-drag,
+.container-drag *,
+.header {
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+}
+
 .App {
   text-align: center;
   width: 95%;
@@ -85,4 +95,11 @@
   height: auto;
   width: 100%;
   padding: 5px 0;
+}
+
+.keyIssue {
+  padding: 10px;
+  border: 1px solid;
+  border-radius: 10px;
+  margin: 10px;
 }

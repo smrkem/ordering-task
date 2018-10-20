@@ -2,12 +2,14 @@ import React, { Component } from 'react'
 import './App.css'
 import DropContainer from './DropContainer'
 import { issues } from './issues'
+import KeyIssue from './KeyIssue';
 
 export default class Survey extends Component {
   state = {
     showing: false,
     issues: issues,
     showContinue: false,
+    showFinal: false,
     maxItems: {
       dontcare: 4,
       carelittle: 4,
@@ -15,6 +17,16 @@ export default class Survey extends Component {
     }
   }
 
+  advanceRound() {
+    let numCarelots = this.state.issues.filter(i => i.category==='carelots').length;
+    this.setState({
+      showFinal: (numCarelots === 2 || numCarelots === 3), 
+      showContinue: false
+    });
+    if (numCarelots > 3) {
+      this.setupRound2();      
+    }
+  }
   setupRound2() {
     let newItems = this.state.issues.filter(i => i.category==='carelots')
     newItems.forEach(i => {
@@ -26,8 +38,7 @@ export default class Survey extends Component {
         dontcare: 2,
         carelittle: 2,
         carelots: newItems.length === 6 ? 3 : 2
-      },
-      showContinue: false
+      }
     })
   }
 
@@ -62,6 +73,17 @@ export default class Survey extends Component {
   }
 
   render() {
+    if (this.state.showFinal) {
+      let keyIssues = this.state.issues.filter(i => i.category === 'carelots');
+      console.log('keyIssues: ', keyIssues);
+
+      return (
+        <div>
+          <h2>Final questions</h2>
+          <KeyIssue {...keyIssues[0]} />
+        </div>)
+    }
+
     var issues = {
       uncategorized: [],
       dontcare: [],
@@ -93,15 +115,14 @@ export default class Survey extends Component {
       }
     })
     return (
-      <div className="container-drag">
-        <h2 className="header">SOCIAL ISSUES SURVEY</h2>
+      <div>
         <div className="issueDetailView">
           {detail}
         </div>
         {this.state.showContinue && (
           <div className="continueView">
             <p>Finish arranging the issues and then <br />
-              <button onClick={e => {this.setupRound2()}}>CONTINUE</button>
+              <button onClick={e => {this.advanceRound()}}>CONTINUE</button>
             </p>
           </div>
         )}
