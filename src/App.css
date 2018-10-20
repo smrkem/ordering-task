@@ -13,7 +13,7 @@
   width: 150px;
   height: 100vh;
   left: 0;
-  top: 10;
+  top: 35px;
   background-color: #EEEEEE;
   border-right: 1px dotted;
 }
@@ -35,8 +35,8 @@
 .droppable {
   position: absolute;
   width: 150px;
-  height: 100vh;
-  top: 10;
+  height: 35vh;
+  bottom: 0;
   background-color: #9E9E9E;
   border-left: 1px dotted;
 }
@@ -56,4 +56,10 @@
   height: 100px;
   background-color: yellow;
   margin: 5px auto;
+}
+
+.droppable .draggable {
+  height: auto;
+  width: 100%;
+  padding: 5px 0;
 }
