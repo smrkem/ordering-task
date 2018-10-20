@@ -6,7 +6,7 @@ export default class DropContainer extends Component {
     }
 
     handleAllowDropping(e) {
-        if (this.props.items.length < 3) {
+        if (this.props.items.length < this.props.maxitems) {
             e.preventDefault();
         }
         else {
@@ -20,8 +20,9 @@ export default class DropContainer extends Component {
 
     render() {
         let alertFull = this.state.alertFull ? 'alertFull' : '';
+        let className = this.props.category === 'uncategorized' ? 'uncategorized' : `container-${this.props.category} droppable ${alertFull}`;
         return (
-            <div className={`container-${this.props.category} droppable ${alertFull}`}
+            <div className={className}
                 onDragOver={e => this.handleAllowDropping(e)}
                 onDrop={e => this.props.onDrop(e, this.props.category)}
                 onDragLeave={e => this.onDragLeave(e)}

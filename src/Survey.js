@@ -1,24 +1,34 @@
 import React, { Component } from 'react'
 import './App.css'
 import DropContainer from './DropContainer'
+import { issues } from './issues'
 
 export default class Survey extends Component {
   state = {
     showing: false,
-    issues: [
-      {
-        name: "Gun Control",
-        category: "uncategorized",
-        bgcolor: "lightblue",
-        copy: "Gun Control copy placeholder..."
+    issues: issues,
+    showContinue: false,
+    maxItems: {
+      dontcare: 4,
+      carelittle: 4,
+      carelots: 6
+    }
+  }
+
+  setupRound2() {
+    let newItems = this.state.issues.filter(i => i.category==='carelots')
+    newItems.forEach(i => {
+      i.category = 'uncategorized'
+    })
+    this.setState({
+      issues: newItems,
+      maxItems: {
+        dontcare: 2,
+        carelittle: 2,
+        carelots: newItems.length === 6 ? 3 : 2
       },
-      {name: "Animal Testing", copy: "Animal Testing copy placeholder...", category: "uncategorized", bgcolor: "yellow"},
-      {name: "Marriage Equality", copy: "Marriage Equality copy placeholder...", category: "uncategorized", bgcolor: "lightgreen"},
-      {name: "Abortion", copy: "Gun Control copy placeholder...", category: "uncategorized", bgcolor: "red"},
-      {name: "Hijab / Burqa", copy: "Gun Control copy placeholder...", category: "uncategorized", bgcolor: "aqua"},
-      {name: "Marijuana Legalisation", copy: "Gun Control copy placeholder...", category: "uncategorized", bgcolor: "orange"},
-      {name: "Gender Inequality", copy: "Gun Control copy placeholder...", category: "uncategorized", bgcolor: "pink"}
-    ]
+      showContinue: false
+    })
   }
 
   onDragStart(e, id) {
@@ -36,7 +46,10 @@ export default class Survey extends Component {
       return issue;
     });
 
-    this.setState({issues});
+    this.setState({
+      issues,
+      showContinue: this.state.issues.filter(i => i.category==='uncategorized').length === 0
+    });
   }
 
   onClick(e, id) {
@@ -66,13 +79,14 @@ export default class Survey extends Component {
             className="draggable"
             style= {{backgroundColor: i.bgcolor}}
         >
-          {i.name}
+          <div className="issueName">{i.name}</div>
         </div>
       )
       if (i.name === this.state.showing) {
         detail = (
           <div className="issueDetailView">
             <h3>{i.name}</h3>
+            <div className="issueIcon">icon</div>
             <p>{i.copy}</p>
           </div>
         )
@@ -84,14 +98,26 @@ export default class Survey extends Component {
         <div className="issueDetailView">
           {detail}
         </div>
-        <div className="uncategorized">
-            <span className="task-header">ISSUES</span>
-            {issues.uncategorized}
-        </div>
+        {this.state.showContinue && (
+          <div className="continueView">
+            <p>Finish arranging the issues and then <br />
+              <button onClick={e => {this.setupRound2()}}>CONTINUE</button>
+            </p>
+          </div>
+        )}
+        
+        <DropContainer 
+          category="uncategorized"
+          title="ISSUES"
+          maxitems={this.state.issues.length}
+          items={issues.uncategorized}
+          onDrop={e => this.onDrop(e, "uncategorized")}
+        />
 
         <DropContainer 
           category="dontcare"
           title="DON'T CARE"
+          maxitems={this.state.maxItems.dontcare}
           items={issues.dontcare}
           onDrop={e => this.onDrop(e, "dontcare")}
         />
@@ -99,11 +125,13 @@ export default class Survey extends Component {
           category="carelittle"
           title="CARE A LITTLE"
           items={issues.carelittle}
+          maxitems={this.state.maxItems.carelittle}
           onDrop={e => this.onDrop(e, "carelittle")}
         />
         <DropContainer 
           category="carelots"
           title="CARE A LOT"
+          maxitems={this.state.maxItems.carelots}
           items={issues.carelots}
           onDrop={e => this.onDrop(e, "carelots")}
         />
