@@ -20,3 +20,9 @@ header {
     font-size: 0.8rem;
     line-height: 1.2;
 }
+.header-links a.active {
+  color: lightgreen;
+}
+.header-links a.active:hover {
+  text-decoration: none;
+}

@@ -2,17 +2,29 @@ import React, { Component } from 'react'
 
 export default class KeyIssue extends Component {
   state = {
-    against_for: 50,
-    importance: false 
+    against_for: false,
+    importance: false,
+    canSubmit: false
   }
 
   handleChange(e, prop) {
     this.setState({[prop]: e.target.value});
   }
 
+  componentDidUpdate() {
+    if (this.state.against_for !== false && this.state.importance !== false && !this.state.canSubmit) {
+      this.setState({canSubmit: true});
+    }
+  }
+
   handleSubmit(e) {
     e.preventDefault();
     this.props.onSubmitHandler(this.state);
+    this.setState({
+      against_for: false,
+      importance: false,
+      canSubmit: false
+    });
   }
 
   render() {
@@ -22,6 +34,7 @@ export default class KeyIssue extends Component {
         <div className="issueIcon">icon</div>
         <p className="issueCopy">{this.props.copy}</p>
         <form onSubmit={(e) => this.handleSubmit(e)} >
+          <span>AGAINST</span>
           <input type="range" min={0} max={100}
             name="against_for"
             value={this.state.against_for}
@@ -29,10 +42,11 @@ export default class KeyIssue extends Component {
               this.handleChange(e, "against_for");
             }}
             />
+          <span>FOR</span>
 
             <div className="radio-wr">
               <h5>How strongly do you feel about {this.props.name}?</h5>
-              <p>
+              <p className="importance-group">
                 <span>Not Strong At All</span>
                 {
                   [1,2,3,4,5].map((num) => {
@@ -52,7 +66,11 @@ export default class KeyIssue extends Component {
             </div>
 
             <div className="submit-wr">
-                <button type="sumbit">NEXT</button>
+                <button
+                  type="sumbit"
+                  disabled={!this.state.canSubmit}
+                >
+                  NEXT</button>
             </div>
         </form>
       </div>

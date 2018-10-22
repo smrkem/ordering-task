@@ -104,9 +104,36 @@
   margin: 2rem 3rem;
 }
 
+input[name="against_for"] {
+  width: 250px;
+  margin: 1rem;
+}
+
+.radio-wr {
+  margin: 2rem 0;
+}
+
+.importance-group{
+  display: flex;
+  justify-content: space-evenly;
+  max-width: 600px;
+  margin: auto;
+}
+
 .final-results pre {
     font-size: 0.8rem;
     background: #eee;
     text-align: left;
 }
 
+
+.random-sort {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+}
+
+.submit-wr button:disabled {
+  color: #aaa;
+}

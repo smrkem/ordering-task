@@ -4,6 +4,23 @@ import DropContainer from './DropContainer'
 import { issues } from './issues'
 import KeyIssue from './KeyIssue';
 
+function shuffle(arr) {
+  console.log('arr1: ', arr);
+  var currentIndex = arr.length;
+  var randIndex, tempValue;
+
+  while (currentIndex !== 0) {
+    randIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    tempValue = arr[currentIndex];
+    arr[currentIndex] = arr[randIndex];
+    arr[randIndex] = tempValue;
+  }
+  console.log('arr2: ', arr);
+  return arr;
+}
+
 export default class Survey extends Component {
   state = {
     showing: false,
@@ -18,6 +35,30 @@ export default class Survey extends Component {
     keyIssues: [],
     keyIssueIndex: 0,
     finishSurvey: false
+  }
+
+  randomSort() {
+    let issues = shuffle(this.state.issues.slice());
+    let numCarelots = 0;
+    let numCarelittle = 0;
+    let numDontcare = 0;
+    let issuesIndex = 0;
+
+    while (numCarelots < this.state.maxItems.carelots) {
+      issues[issuesIndex].category = 'carelots';
+      issuesIndex++;
+      numCarelots++;
+    }
+
+    while (numCarelittle < this.state.maxItems.carelittle) {
+      issues[issuesIndex++].category = 'carelittle';
+      numCarelittle++;
+    }
+
+    while (issuesIndex < issues.length) {
+      issues[issuesIndex++].category = 'dontcare';
+    }
+    this.setState({issues, showContinue: true})
   }
 
   advanceRound() {
@@ -81,9 +122,7 @@ export default class Survey extends Component {
   }
 
   submitKeyIssue(issueData) {
-    // console.log("issueData: ", issueData);
-    // console.log("issueIndex: ", this.state.keyIssueIndex);
-    // console.log("keyIssues:", this.state.keyIssues)
+    delete issueData.canSubmit;
 
     let keyIssues = this.state.keyIssues.slice();
     keyIssues[this.state.keyIssueIndex] = {
@@ -165,6 +204,12 @@ export default class Survey extends Component {
     })
     return (
       <div>
+
+        <button
+          onClick={() => {this.randomSort()}}
+          className="random-sort"
+        >RANDOM</button>
+
         <div className="issueDetailView">
           {detail}
         </div>
