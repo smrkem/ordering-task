@@ -14,17 +14,25 @@ export default class Survey extends Component {
       dontcare: 4,
       carelittle: 4,
       carelots: 6
-    }
+    },
+    keyIssues: [],
+    keyIssueIndex: 0,
+    finishSurvey: false
   }
 
   advanceRound() {
     let numCarelots = this.state.issues.filter(i => i.category==='carelots').length;
     this.setState({
-      showFinal: (numCarelots === 2 || numCarelots === 3), 
+      showFinal: (numCarelots <= 3), 
       showContinue: false
     });
     if (numCarelots > 3) {
       this.setupRound2();      
+    }
+    else {
+      this.setState({
+        keyIssues: this.state.issues.filter(i => i.category === 'carelots')
+      });
     }
   }
   setupRound2() {
@@ -72,17 +80,58 @@ export default class Survey extends Component {
     this.setState({showing: issue.name});
   }
 
+  submitKeyIssue(issueData) {
+    // console.log("issueData: ", issueData);
+    // console.log("issueIndex: ", this.state.keyIssueIndex);
+    // console.log("keyIssues:", this.state.keyIssues)
+
+    let keyIssues = this.state.keyIssues.slice();
+    keyIssues[this.state.keyIssueIndex] = {
+      ...keyIssues[this.state.keyIssueIndex],
+      ...issueData
+    }
+    this.setState({keyIssues});
+
+    if (this.state.keyIssueIndex === (this.state.keyIssues.length - 1)) {
+      this.setState({finishSurvey: true, showFinal: false});
+    }
+    else {
+      this.setState({
+        keyIssueIndex: this.state.keyIssueIndex + 1
+      })
+    }
+  }
+
   render() {
     if (this.state.showFinal) {
-      let keyIssues = this.state.issues.filter(i => i.category === 'carelots');
-      console.log('keyIssues: ', keyIssues);
+      // console.log('keyIssues: ', this.state.keyIssues);
 
       return (
         <div>
           <h2>Final questions</h2>
-          <KeyIssue {...keyIssues[0]} />
+          <KeyIssue 
+            {...this.state.keyIssues[this.state.keyIssueIndex]}
+            onSubmitHandler={(issueData) => {
+              this.submitKeyIssue(issueData);
+            }}
+          />
         </div>)
     }
+
+    if (this.state.finishSurvey) {
+      this.state.keyIssues.forEach(issue => {
+        delete issue.bgcolor;
+        delete issue.copy;
+        delete issue.category;
+      })
+      return (
+        <div className="final-results">
+          <h2>Final Results</h2>
+          <pre>{JSON.stringify(this.state.keyIssues, null, 3)}</pre>
+        </div>
+      )
+    }
+
 
     var issues = {
       uncategorized: [],

@@ -99,7 +99,13 @@
 
 .keyIssue {
   padding: 10px;
-  border: 1px solid;
+  border: 3px solid;
   border-radius: 10px;
-  margin: 10px;
+  margin: 2rem 3rem;
+}
+
+.final-results pre {
+    font-size: 0.8rem;
+    background: #eee;
+    text-align: left;
 }
